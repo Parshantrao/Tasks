@@ -1,15 +1,18 @@
 import { useState } from "react";
 
+// ---------------- Types ----------------
+
 type Section = {
   title: string;
   must: string[];
   advanced?: string[];
 };
 
+// ---------------- Data ----------------
+
 const backendData: Section[] = [
   {
     title: "🟢 Node.js Core Internals",
-
     must: [
       "Event Loop (VERY IMPORTANT)",
       "Call Stack",
@@ -31,10 +34,8 @@ const backendData: Section[] = [
       "Graceful Shutdown",
     ],
   },
-
   {
     title: "🟡 Express.js Advanced",
-
     must: [
       "Middleware Architecture",
       "Error Handling",
@@ -45,13 +46,10 @@ const backendData: Section[] = [
       "Logging Middleware",
       "Security Middleware",
     ],
-
     advanced: ["Custom Middleware Framework", "Request Queuing"],
   },
-
   {
     title: "🔵 API Design (Critical)",
-
     must: [
       "REST Principles",
       "Idempotency",
@@ -68,10 +66,8 @@ const backendData: Section[] = [
       "OpenAPI / Swagger",
     ],
   },
-
   {
     title: "🔴 Authentication & Security",
-
     must: [
       "JWT",
       "OAuth2",
@@ -89,10 +85,8 @@ const backendData: Section[] = [
       "Secrets Management",
     ],
   },
-
   {
     title: "🟣 Databases — SQL",
-
     must: [
       "Indexing",
       "Query Optimization",
@@ -109,7 +103,6 @@ const backendData: Section[] = [
       "Read Replicas",
       "Write Scaling",
     ],
-
     advanced: [
       "Query Execution Plans",
       "Partitioning",
@@ -117,16 +110,12 @@ const backendData: Section[] = [
       "Replication",
     ],
   },
-
   {
     title: "🟠 MongoDB",
-
     must: ["Aggregation Pipeline", "Indexes", "Data Modeling", "Transactions"],
   },
-
   {
     title: "🟡 Caching",
-
     must: [
       "Redis Basics",
       "Cache Invalidation",
@@ -135,158 +124,188 @@ const backendData: Section[] = [
       "Cache Aside",
     ],
   },
-
   {
     title: "🔵 Message Queues",
-
     must: ["BullMQ", "Kafka (conceptual)", "RabbitMQ (conceptual)"],
   },
-
   {
     title: "🟢 File Handling",
-
     must: ["File Upload", "Streaming Files", "Chunk Upload", "S3 Upload"],
   },
-
   {
     title: "🟣 Logging",
-
     must: ["Winston", "Structured Logging", "Log Rotation"],
   },
-
   {
     title: "🔴 Testing",
-
     must: ["Unit Testing", "Integration Testing", "Mocking APIs", "Jest"],
   },
-  
 ];
+
+// ---------------- Component ----------------
 
 function Backend() {
   const [completed, setCompleted] = useState<Set<string>>(new Set());
+  const [openSections, setOpenSections] = useState<Set<string>>(
+    new Set(backendData.map((s) => s.title))
+  );
 
   const toggleTopic = (topic: string) => {
     const updated = new Set(completed);
 
-    if (updated.has(topic)) {
-      updated.delete(topic);
-    } else {
-      updated.add(topic);
-    }
+    if (updated.has(topic)) updated.delete(topic);
+    else updated.add(topic);
 
     setCompleted(updated);
   };
 
-  // total topics count
+  const toggleSection = (title: string) => {
+    const updated = new Set(openSections);
+
+    if (updated.has(title)) updated.delete(title);
+    else updated.add(title);
+
+    setOpenSections(updated);
+  };
 
   const totalTopics = backendData.reduce((acc, section) => {
     const mustCount = section.must.length;
-
     const advCount = section.advanced ? section.advanced.length : 0;
 
     return acc + mustCount + advCount;
   }, 0);
 
-  const progressPercent = Math.round((completed.size / totalTopics) * 100);
+  const progressPercent = Math.round(
+    (completed.size / totalTopics) * 100
+  );
+
+  // ---------------- UI ----------------
 
   return (
-    <div className="mt-8 bg-white p-6 rounded-2xl shadow-md max-h-[650px] overflow-y-auto">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">
-        Backend Learning Tracker
-      </h2>
+    <div className="mt-8 bg-slate-50 border border-slate-200 rounded-2xl shadow-sm max-h-[700px] overflow-y-auto">
+      {/* Header */}
 
-      {/* Progress Bar */}
+      <div className="sticky top-0 bg-slate-50 border-b border-slate-200 p-6 z-10">
+        <h2 className="text-2xl font-semibold text-slate-800">
+          Backend Learning Tracker
+        </h2>
 
-      <div className="mb-6">
-        <div className="flex justify-between text-sm font-medium mb-1">
-          <span>
-            Progress: {completed.size} / {totalTopics}
-          </span>
+        {/* Progress */}
 
-          <span>{progressPercent}%</span>
-        </div>
+        <div className="mt-4">
+          <div className="flex justify-between text-sm text-slate-600 mb-2">
+            <span>
+              {completed.size} / {totalTopics} topics completed
+            </span>
+            <span className="font-medium">
+              {progressPercent}%
+            </span>
+          </div>
 
-        <div className="w-full bg-gray-200 rounded-full h-3">
-          <div
-            className="bg-green-500 h-3 rounded-full transition-all"
-            style={{
-              width: `${progressPercent}%`,
-            }}
-          />
+          <div className="w-full bg-slate-200 rounded-full h-2">
+            <div
+              className="bg-slate-700 h-2 rounded-full transition-all duration-300"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
         </div>
       </div>
 
-      {backendData.map((section) => (
-        <div key={section.title} className="mb-6">
-          {/* Section Title */}
+      {/* Sections */}
 
-          <h3 className="text-lg font-semibold text-blue-600 mb-3">
-            {section.title}
-          </h3>
+      <div className="p-6 space-y-6">
+        {backendData.map((section) => (
+          <div
+            key={section.title}
+            className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm"
+          >
+            {/* Section Header */}
 
-          {/* MUST Topics */}
+            <button
+              onClick={() => toggleSection(section.title)}
+              className="w-full flex items-center justify-between text-left"
+            >
+              <h3 className="text-base font-semibold text-slate-800">
+                {section.title}
+              </h3>
 
-          <div className="mb-3">
-            <p className="text-sm font-semibold text-gray-700 mb-2">
-              Must Know:
-            </p>
+              <span className="text-sm text-slate-500">
+                {openSections.has(section.title) ? "−" : "+"}
+              </span>
+            </button>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-              {section.must.map((topic) => (
-                <label
-                  key={topic}
-                  className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition
-                  ${
-                    completed.has(topic)
-                      ? "bg-green-100 line-through text-gray-500"
-                      : "hover:bg-gray-100"
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={completed.has(topic)}
-                    onChange={() => toggleTopic(topic)}
-                  />
+            {/* Content */}
 
-                  {topic}
-                </label>
-              ))}
-            </div>
-          </div>
+            {openSections.has(section.title) && (
+              <div className="mt-4 space-y-4">
+                {/* MUST */}
 
-          {/* ADVANCED Topics */}
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">
+                    Must Know
+                  </p>
 
-          {section.advanced && (
-            <div>
-              <p className="text-sm font-semibold text-purple-700 mb-2">
-                Advanced:
-              </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                    {section.must.map((topic) => (
+                      <label
+                        key={topic}
+                        className={`flex items-center gap-2 p-2 rounded-lg border text-sm transition
+                        ${
+                          completed.has(topic)
+                            ? "bg-slate-100 text-slate-400 border-slate-200 line-through"
+                            : "hover:bg-slate-50 border-transparent"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          className="accent-slate-700"
+                          checked={completed.has(topic)}
+                          onChange={() => toggleTopic(topic)}
+                        />
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-                {section.advanced.map((topic) => (
-                  <label
-                    key={topic}
-                    className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition
-                    ${
-                      completed.has(topic)
-                        ? "bg-purple-100 line-through text-gray-500"
-                        : "hover:bg-gray-100"
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={completed.has(topic)}
-                      onChange={() => toggleTopic(topic)}
-                    />
+                        {topic}
+                      </label>
+                    ))}
+                  </div>
+                </div>
 
-                    {topic}
-                  </label>
-                ))}
+                {/* ADVANCED */}
+
+                {section.advanced && (
+                  <div>
+                    <p className="text-xs font-medium uppercase tracking-wide text-indigo-500 mb-2">
+                      Advanced
+                    </p>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                      {section.advanced.map((topic) => (
+                        <label
+                          key={topic}
+                          className={`flex items-center gap-2 p-2 rounded-lg border text-sm transition
+                          ${
+                            completed.has(topic)
+                              ? "bg-indigo-50 text-slate-400 border-indigo-100 line-through"
+                              : "hover:bg-slate-50 border-transparent"
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            className="accent-indigo-600"
+                            checked={completed.has(topic)}
+                            onChange={() => toggleTopic(topic)}
+                          />
+
+                          {topic}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
-          )}
-        </div>
-      ))}
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
