@@ -2,76 +2,79 @@ import { useState } from "react";
 
 type Section = {
   title: string;
-  must: string[];
-  advanced?: string[];
+  easy: string[];
+  medium: string[];
+  hard?: string[];
 };
 
 const javascriptData: Section[] = [
 
   {
-    title: "🟢 JavaScript Fundamentals (Core)",
+    title: "🟢 JavaScript Fundamentals",
 
-    must: [
-      "Closures",
+    easy: [
+      "Data Types (Primitive vs Non-Primitive)",
+      "typeof operator",
+      "var vs let vs const",
+      "Truthy vs Falsy Values",
+      "NaN and isNaN()",
+      "Strict Mode"
+    ],
+
+    medium: [
       "Hoisting",
-      "Scopes",
+      "Scope (Global, Function, Block)",
       "Execution Context",
-      "this keyword",
-      "Call / Apply / Bind",
-      "Prototypes",
-      "Prototype Chain"
+      "Implicit Type Coercion",
+      "Pass by Value vs Reference",
+      "Equality (== vs ===)"
     ],
 
-    advanced: [
+    hard: [
       "Temporal Dead Zone",
-      "Strict Mode",
-      "Closures in Loops"
+      "Dynamic Typing Edge Cases"
     ]
   },
 
   {
-    title: "🟡 Event Loop & Async JS",
+    title: "🟡 Functions & Closures",
 
-    must: [
-      "Event Loop (JS)",
-      "Microtask Queue",
-      "Macrotask Queue",
-      "Promises",
-      "Async/Await"
+    easy: [
+      "Function Declarations vs Expressions",
+      "Arrow Functions",
+      "Callback Functions",
+      "Self Invoking Functions (IIFE)"
     ],
 
-    advanced: [
-      "Web APIs",
-      "setTimeout Internals",
-      "fetch API Internals"
+    medium: [
+      "Closures",
+      "Higher Order Functions",
+      "Call / Apply / Bind",
+      "First Class Functions"
+    ],
+
+    hard: [
+      "Closures in Loops",
+      "Function Currying"
     ]
   },
 
   {
-    title: "🔵 Performance Utilities",
+    title: "🔵 Objects & Memory Model",
 
-    must: [
-      "Debounce Implementation",
-      "Throttle Implementation",
-      "Currying",
-      "Polyfills"
+    easy: [
+      "Objects & Arrays",
+      "Prototype Basics",
+      "Object.assign()"
     ],
 
-    advanced: [
-      "Memoization",
-      "Lazy Evaluation"
-    ]
-  },
-
-  {
-    title: "🟣 Object & Memory Model",
-
-    must: [
-      "Memory Management",
-      "Garbage Collection"
+    medium: [
+      "Prototype Chain",
+      "Shallow Copy",
+      "Deep Copy"
     ],
 
-    advanced: [
+    hard: [
       "WeakMap",
       "WeakSet",
       "Memory Leaks"
@@ -79,18 +82,46 @@ const javascriptData: Section[] = [
   },
 
   {
-    title: "🟠 Modern JavaScript",
+    title: "🟣 Async JavaScript & Event Loop",
 
-    must: [
-      "Modules (ESM)",
-      "CommonJS",
-      "Spread Operator",
-      "Rest Operator"
+    easy: [
+      "Callbacks",
+      "Promises",
+      "Async/Await"
     ],
 
-    advanced: [
+    medium: [
+      "Event Loop",
+      "Microtasks vs Macrotasks",
+      "setTimeout Behavior"
+    ],
+
+    hard: [
+      "Web APIs Internals",
+      "Promise Execution Order",
+      "Concurrency Limiter Design"
+    ]
+  },
+
+  {
+    title: "🟠 Modern JavaScript (ES6+)",
+
+    easy: [
+      "Template Literals",
+      "Destructuring",
+      "Default Parameters",
+      "Spread Operator",
+      "Rest Parameters"
+    ],
+
+    medium: [
+      "Modules (ESM)",
+      "Named vs Default Exports",
+      "Iterators"
+    ],
+
+    hard: [
       "Generators",
-      "Iterators",
       "Symbol"
     ]
   },
@@ -98,15 +129,40 @@ const javascriptData: Section[] = [
   {
     title: "🔴 DOM & Browser Behavior",
 
-    must: [
-      "Event Delegation",
+    easy: [
+      "DOM Manipulation Basics",
       "Event Bubbling",
       "Event Capturing"
     ],
 
-    advanced: [
+    medium: [
+      "Event Delegation",
+      "Reflows vs Repaints"
+    ],
+
+    hard: [
       "Mutation Observer",
       "Intersection Observer"
+    ]
+  },
+
+  {
+    title: "🟡 Performance Utilities",
+
+    easy: [
+      "Debouncing Concept",
+      "Throttling Concept"
+    ],
+
+    medium: [
+      "Memoization",
+      "Lazy Evaluation"
+    ],
+
+    hard: [
+      "Debounce Implementation",
+      "Throttle Implementation",
+      "Batch DOM Updates"
     ]
   }
 
@@ -130,17 +186,19 @@ function JavaScriptCore() {
     setCompleted(updated);
   };
 
+  // -------- Total Topics --------
+
   const totalTopics =
     javascriptData.reduce((acc, section) => {
 
-      const mustCount = section.must.length;
-
-      const advCount =
-        section.advanced
-          ? section.advanced.length
-          : 0;
-
-      return acc + mustCount + advCount;
+      return (
+        acc +
+        section.easy.length +
+        section.medium.length +
+        (section.hard
+          ? section.hard.length
+          : 0)
+      );
 
     }, 0);
 
@@ -197,25 +255,26 @@ function JavaScriptCore() {
             {section.title}
           </h3>
 
-          {/* MUST */}
+          {/* EASY */}
 
           <div className="mb-3">
 
-            <p className="text-sm font-semibold text-gray-700 mb-2">
-              Must Know:
+            <p className="text-sm font-semibold text-green-700 mb-2">
+              Easy:
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
 
-              {section.must.map((topic) => (
+              {section.easy.map((topic) => (
 
                 <label
                   key={topic}
                   className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition
-                  ${completed.has(topic)
+                  ${
+                    completed.has(topic)
                       ? "bg-green-100 line-through text-gray-500"
                       : "hover:bg-gray-100"
-                    }`}
+                  }`}
                 >
 
                   <input
@@ -236,27 +295,68 @@ function JavaScriptCore() {
 
           </div>
 
-          {/* ADVANCED */}
+          {/* MEDIUM */}
 
-          {section.advanced && (
+          <div className="mb-3">
+
+            <p className="text-sm font-semibold text-yellow-700 mb-2">
+              Medium:
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+
+              {section.medium.map((topic) => (
+
+                <label
+                  key={topic}
+                  className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition
+                  ${
+                    completed.has(topic)
+                      ? "bg-yellow-100 line-through text-gray-500"
+                      : "hover:bg-gray-100"
+                  }`}
+                >
+
+                  <input
+                    type="checkbox"
+                    checked={completed.has(topic)}
+                    onChange={() =>
+                      toggleTopic(topic)
+                    }
+                  />
+
+                  {topic}
+
+                </label>
+
+              ))}
+
+            </div>
+
+          </div>
+
+          {/* HARD */}
+
+          {section.hard && (
 
             <div>
 
-              <p className="text-sm font-semibold text-purple-700 mb-2">
-                Advanced:
+              <p className="text-sm font-semibold text-red-700 mb-2">
+                Hard:
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
 
-                {section.advanced.map((topic) => (
+                {section.hard.map((topic) => (
 
                   <label
                     key={topic}
                     className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition
-                    ${completed.has(topic)
-                        ? "bg-purple-100 line-through text-gray-500"
+                    ${
+                      completed.has(topic)
+                        ? "bg-red-100 line-through text-gray-500"
                         : "hover:bg-gray-100"
-                      }`}
+                    }`}
                   >
 
                     <input
