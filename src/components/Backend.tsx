@@ -145,18 +145,35 @@ const backendData: Section[] = [
 // ---------------- Component ----------------
 
 function Backend() {
-  const [completed, setCompleted] = useState<Set<string>>(new Set());
   const [openSections, setOpenSections] = useState<Set<string>>(
     new Set(backendData.map((s) => s.title))
   );
+  // 1. Load from localStorage on initial render
+  const [completed, setCompleted] = useState<Set<string>>(() => {
+    try {
+      const saved = localStorage.getItem("backend_topics_list");
+      if (!saved) return new Set();
+      const parsed = JSON.parse(saved);
+      // Guard: must be an array, not a stale {} object
+      if (!Array.isArray(parsed)) {
+        localStorage.removeItem("backend_topics_list");
+        return new Set();
+      }
+      return new Set(parsed);
+    } catch {
+      return new Set();
+    }
+  });
 
+  // 2. Clean toggleTopic — just use current state, save after toggling
   const toggleTopic = (topic: string) => {
-    const updated = new Set(completed);
-
-    if (updated.has(topic)) updated.delete(topic);
-    else updated.add(topic);
-
-    setCompleted(updated);
+    setCompleted(prev => {
+      const updated = new Set(prev);
+      if (updated.has(topic)) updated.delete(topic);
+      else updated.add(topic);
+      localStorage.setItem("backend_topics_list", JSON.stringify([...updated]));
+      return updated;
+    });
   };
 
   const toggleSection = (title: string) => {
@@ -250,11 +267,10 @@ function Backend() {
                       <label
                         key={topic}
                         className={`flex items-center gap-2 p-2 rounded-lg border text-sm transition
-                        ${
-                          completed.has(topic)
+                        ${completed.has(topic)
                             ? "bg-slate-100 text-slate-400 border-slate-200 line-through"
                             : "hover:bg-slate-50 border-transparent"
-                        }`}
+                          }`}
                       >
                         <input
                           type="checkbox"
@@ -282,11 +298,10 @@ function Backend() {
                         <label
                           key={topic}
                           className={`flex items-center gap-2 p-2 rounded-lg border text-sm transition
-                          ${
-                            completed.has(topic)
+                          ${completed.has(topic)
                               ? "bg-indigo-50 text-slate-400 border-indigo-100 line-through"
                               : "hover:bg-slate-50 border-transparent"
-                          }`}
+                            }`}
                         >
                           <input
                             type="checkbox"
@@ -311,3 +326,5 @@ function Backend() {
 }
 
 export default Backend;
+
+

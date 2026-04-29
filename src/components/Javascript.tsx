@@ -170,20 +170,29 @@ const javascriptData: Section[] = [
 
 function JavaScriptCore() {
 
-  const [completed, setCompleted] =
-    useState<Set<string>>(new Set());
+  const [completed, setCompleted] = useState<Set<string>>(() => {
+    try {
+      const saved = localStorage.getItem("js_topics_list");
+      if (!saved) return new Set();
+      const parsed = JSON.parse(saved);
+      if (!Array.isArray(parsed)) {
+        localStorage.removeItem("js_topics_list");
+        return new Set();
+      }
+      return new Set(parsed);
+    } catch {
+      return new Set();
+    }
+  });
 
   const toggleTopic = (topic: string) => {
-
-    const updated = new Set(completed);
-
-    if (updated.has(topic)) {
-      updated.delete(topic);
-    } else {
-      updated.add(topic);
-    }
-
-    setCompleted(updated);
+    setCompleted(prev => {
+      const updated = new Set(prev);
+      if (updated.has(topic)) updated.delete(topic);
+      else updated.add(topic);
+      localStorage.setItem("js_topics_list", JSON.stringify([...updated]));
+      return updated;
+    });
   };
 
   // -------- Total Topics --------
@@ -270,11 +279,10 @@ function JavaScriptCore() {
                 <label
                   key={topic}
                   className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition
-                  ${
-                    completed.has(topic)
+                  ${completed.has(topic)
                       ? "bg-green-100 line-through text-gray-500"
                       : "hover:bg-gray-100"
-                  }`}
+                    }`}
                 >
 
                   <input
@@ -310,11 +318,10 @@ function JavaScriptCore() {
                 <label
                   key={topic}
                   className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition
-                  ${
-                    completed.has(topic)
+                  ${completed.has(topic)
                       ? "bg-yellow-100 line-through text-gray-500"
                       : "hover:bg-gray-100"
-                  }`}
+                    }`}
                 >
 
                   <input
@@ -352,11 +359,10 @@ function JavaScriptCore() {
                   <label
                     key={topic}
                     className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition
-                    ${
-                      completed.has(topic)
+                    ${completed.has(topic)
                         ? "bg-red-100 line-through text-gray-500"
                         : "hover:bg-gray-100"
-                    }`}
+                      }`}
                   >
 
                     <input
