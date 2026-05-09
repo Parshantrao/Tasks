@@ -112,7 +112,43 @@ const backendData: Section[] = [
   },
   {
     title: "🟠 MongoDB",
-    must: ["Aggregation Pipeline", "Indexes", "Data Modeling", "Transactions"],
+    must: [
+      // Core Concepts
+      "Data Modeling",
+      "Schema Design",
+      "Aggregation Pipeline",
+      "Indexes",
+      "Transactions",
+      "Replication",
+      "Sharding",
+
+      // Querying & Performance
+      "Advanced Queries",
+      "Pagination",
+      "Query Optimization",
+      "Explain Plans",
+      "Connection Pooling",
+
+      // Mongoose
+      "Mongoose Schemas",
+      "Schema Validation",
+      "Schema Methods",
+      "Middleware (Pre/Post Hooks)",
+      "Populate",
+      "Lean Queries",
+      "Getter/Setter",
+
+      // Production
+      "MongoDB Security Basics",
+      "Backup & Restore",
+    ],
+
+    advanced: [
+      "Shard Keys",
+      "Aggregation Optimization",
+      "Change Streams",
+      "Distributed Transactions",
+    ],
   },
   {
     title: "🟡 Caching",
