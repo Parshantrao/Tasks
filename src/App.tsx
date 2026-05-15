@@ -7,7 +7,6 @@ import DevOps from "./components/DevOps";
 import JavaScriptCore from "./components/Javascript";
 import SystemDesign from "./components/SystemDesign";
 
-import Project from "./components/Project";
 import Frontend from "./components/Frontend";
 import LowPressure from "./components/LowPressure";
 
@@ -41,15 +40,15 @@ const tabs: Tab[] = [
       { title: "Backend", component: Backend },
       { title: "DevOps", component: DevOps },
       { title: "JavaScript", component: JavaScriptCore },
-      { title: "System Design", component: SystemDesign },
+    
     ],
   },
 
   {
-    title: "Project",
+    title: "System Design",
     timing: "3 - 4:30",
-    hash: "project",
-    component: Project,
+    hash: "system design",
+    component: SystemDesign,
   },
 
   {
